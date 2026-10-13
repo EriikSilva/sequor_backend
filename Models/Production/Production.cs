@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace sequor_backend.models
@@ -14,8 +13,11 @@ namespace sequor_backend.models
         [Column(TypeName = "varchar(50)")]
         public string Order { get; set; }
         
+        [Column("Date", TypeName = "DateTime")]
+        public DateTime StartDateAppointment { get; set; }
+
         [Column(TypeName = "DateTime")]
-        public DateTime Date { get; set; }
+        public DateTime? EndDateAppointment { get; set; }
 
         [Column(TypeName = "numeric(18,2)")]
         public decimal Quantity { get; set; }

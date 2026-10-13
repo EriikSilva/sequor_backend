@@ -4,6 +4,9 @@ using Scalar.AspNetCore;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+builder.Services.AddScoped<sequor_backend.Services.Orders.IOrdersService, sequor_backend.Services.Orders.OrdersService>();
+builder.Services.AddScoped<sequor_backend.Services.Users.IUsersService, sequor_backend.Services.Users.UsersService>();
+builder.Services.AddScoped<sequor_backend.Services.Production.IProductionService, sequor_backend.Services.Production.ProductionService>();
 builder.Services.AddOpenApi();
 builder.Services.AddCors(options =>
 {

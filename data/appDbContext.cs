@@ -27,8 +27,68 @@ namespace sequor_backend.data
                     production.Id,
                     production.Email,
                     production.Order,
-                    production.Date
+                    production.StartDateAppointment
                 });
+
+            modelBuilder.Entity<models.ProductMaterial>()
+                .HasKey(productMaterial => new
+                {
+                    productMaterial.ProductCode,
+                    productMaterial.MaterialCode
+                });
+
+            modelBuilder.Entity<models.OrderProduction>().HasData(
+                new models.OrderProduction
+                {
+                    Order = "111",
+                    Quantity = 100.00m,
+                    ProductCode = "abc"
+                },
+                new models.OrderProduction
+                {
+                    Order = "222",
+                    Quantity = 200.00m,
+                    ProductCode = "def"
+                });
+
+            modelBuilder.Entity<models.Product>().HasData(
+                new models.Product
+                {
+                    ProductCode = "abc",
+                    ProductDescription = "xxx",
+                    Image = "0x000001",
+                    CycleTime = 30.3m
+                },
+                new models.Product
+                {
+                    ProductCode = "def",
+                    ProductDescription = "yyy",
+                    Image = "0x00000",
+                    CycleTime = 45.5m
+                });
+
+            modelBuilder.Entity<models.Material>().HasData(
+                new models.Material
+                {
+                    MaterialCode = "aaa",
+                    MaterialDescription = "desc1"
+                },
+                new models.Material
+                {
+                    MaterialCode = "bbb",
+                    MaterialDescription = "desc2"
+                },
+                new models.Material
+                {
+                    MaterialCode = "ccc",
+                    MaterialDescription = "desc3"
+                });
+
+            modelBuilder.Entity<models.ProductMaterial>().HasData(
+                new models.ProductMaterial { ProductCode = "abc", MaterialCode = "aaa", SortOrder = 1 },
+                new models.ProductMaterial { ProductCode = "abc", MaterialCode = "bbb", SortOrder = 2 },
+                new models.ProductMaterial { ProductCode = "def", MaterialCode = "ccc", SortOrder = 1 },
+                new models.ProductMaterial { ProductCode = "def", MaterialCode = "bbb", SortOrder = 2 });
         }
 }
 }

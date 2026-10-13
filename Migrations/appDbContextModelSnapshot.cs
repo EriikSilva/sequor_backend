@@ -33,6 +33,23 @@ namespace sequor_backend.Migrations
                     b.HasKey("MaterialCode");
 
                     b.ToTable("Material");
+
+                    b.HasData(
+                        new
+                        {
+                            MaterialCode = "aaa",
+                            MaterialDescription = "desc1"
+                        },
+                        new
+                        {
+                            MaterialCode = "bbb",
+                            MaterialDescription = "desc2"
+                        },
+                        new
+                        {
+                            MaterialCode = "ccc",
+                            MaterialDescription = "desc3"
+                        });
                 });
 
             modelBuilder.Entity("sequor_backend.models.OrderProduction", b =>
@@ -49,6 +66,20 @@ namespace sequor_backend.Migrations
                     b.HasKey("Order");
 
                     b.ToTable("OrderProduction");
+
+                    b.HasData(
+                        new
+                        {
+                            Order = "111",
+                            ProductCode = "abc",
+                            Quantity = 100.00m
+                        },
+                        new
+                        {
+                            Order = "222",
+                            ProductCode = "def",
+                            Quantity = 200.00m
+                        });
                 });
 
             modelBuilder.Entity("sequor_backend.models.Product", b =>
@@ -68,6 +99,22 @@ namespace sequor_backend.Migrations
                     b.HasKey("ProductCode");
 
                     b.ToTable("Product");
+
+                    b.HasData(
+                        new
+                        {
+                            ProductCode = "abc",
+                            CycleTime = 30.3m,
+                            Image = "0x000001",
+                            ProductDescription = "xxx"
+                        },
+                        new
+                        {
+                            ProductCode = "def",
+                            CycleTime = 45.5m,
+                            Image = "0x00000",
+                            ProductDescription = "yyy"
+                        });
                 });
 
             modelBuilder.Entity("sequor_backend.models.ProductMaterial", b =>
@@ -78,9 +125,38 @@ namespace sequor_backend.Migrations
                     b.Property<string>("MaterialCode")
                         .HasColumnType("varchar(50)");
 
-                    b.HasKey("ProductCode");
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.HasKey("ProductCode", "MaterialCode");
 
                     b.ToTable("ProductMaterial");
+
+                    b.HasData(
+                        new
+                        {
+                            ProductCode = "abc",
+                            MaterialCode = "aaa",
+                            SortOrder = 1
+                        },
+                        new
+                        {
+                            ProductCode = "abc",
+                            MaterialCode = "bbb",
+                            SortOrder = 2
+                        },
+                        new
+                        {
+                            ProductCode = "def",
+                            MaterialCode = "ccc",
+                            SortOrder = 1
+                        },
+                        new
+                        {
+                            ProductCode = "def",
+                            MaterialCode = "bbb",
+                            SortOrder = 2
+                        });
                 });
 
             modelBuilder.Entity("sequor_backend.models.Production", b =>
@@ -94,11 +170,15 @@ namespace sequor_backend.Migrations
                     b.Property<string>("Order")
                         .HasColumnType("varchar(50)");
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("DateTime");
+                    b.Property<DateTime>("StartDateAppointment")
+                        .HasColumnType("DateTime")
+                        .HasColumnName("Date");
 
                     b.Property<decimal>("CycleTime")
                         .HasColumnType("numeric(18,2)");
+
+                    b.Property<DateTime?>("EndDateAppointment")
+                        .HasColumnType("DateTime");
 
                     b.Property<string>("MaterialCode")
                         .HasColumnType("varchar(50)");
@@ -106,7 +186,7 @@ namespace sequor_backend.Migrations
                     b.Property<decimal>("Quantity")
                         .HasColumnType("numeric(18,2)");
 
-                    b.HasKey("Id", "Email", "Order", "Date");
+                    b.HasKey("Id", "Email", "Order", "StartDateAppointment");
 
                     b.ToTable("Production");
                 });
@@ -116,7 +196,7 @@ namespace sequor_backend.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("varchar(100)");
 
-                    b.Property<DateTime>("EndDate")
+                    b.Property<DateTime?>("EndDate")
                         .HasColumnType("DateTime");
 
                     b.Property<DateTime>("InitialDate")

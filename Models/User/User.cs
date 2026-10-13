@@ -16,7 +16,7 @@ namespace sequor_backend.models
         public DateTime InitialDate { get; set; }
 
         [Column(TypeName = "DateTime")]
-        public DateTime EndDate { get; set; } 
+        public DateTime? EndDate { get; set; }
 
     }
 }

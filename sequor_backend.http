@@ -4,3 +4,43 @@ GET {{sequor_backend_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###
+
+### Get all orders with product and material details
+GET {{sequor_backend_HostAddress}}/api/orders
+Accept: application/json
+
+###
+
+### Register a user
+POST {{sequor_backend_HostAddress}}/api/users
+Content-Type: application/json
+
+{
+  "email": "new.user@example.com",
+  "name": "New User"
+}
+
+### Get a user by email
+GET {{sequor_backend_HostAddress}}/api/users/new.user@example.com
+Accept: application/json
+
+###
+
+### Get production records for a user
+GET {{sequor_backend_HostAddress}}/api/orders/GetProduction?email=new.user@example.com
+Accept: application/json
+
+### Record production for an existing user and order
+POST {{sequor_backend_HostAddress}}/api/orders/Production
+Content-Type: application/json
+
+{
+  "email": "new.user@example.com",
+  "order": "111",
+  "startDateAppointment": "2026-10-13T09:00:00Z",
+  "endDateAppointment": "2026-10-13T10:00:00Z",
+  "quantity": 10,
+  "cycleTime": 30.3
+}
+
+###
