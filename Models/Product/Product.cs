@@ -17,7 +17,5 @@ namespace sequor_backend.models
      
         [Column(TypeName = "numeric(18,2)")]
         public decimal CycleTime { get; set; }
-
-        // public ProductionOrder ProductionOrder { get; set; }
     }
 }
