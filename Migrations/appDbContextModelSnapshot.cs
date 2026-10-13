@@ -35,6 +35,22 @@ namespace sequor_backend.Migrations
                     b.ToTable("Material");
                 });
 
+            modelBuilder.Entity("sequor_backend.models.OrderProduction", b =>
+                {
+                    b.Property<string>("Order")
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("ProductCode")
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("numeric(18,2)");
+
+                    b.HasKey("Order");
+
+                    b.ToTable("OrderProduction");
+                });
+
             modelBuilder.Entity("sequor_backend.models.Product", b =>
                 {
                     b.Property<string>("ProductCode")

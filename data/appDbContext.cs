@@ -9,7 +9,7 @@ namespace sequor_backend.data
 
         public DbSet<models.Product> Product { get; set; }
 
-        public DbSet<models.Production> OrderProduction { get; set; }
+        public DbSet<models.OrderProduction> OrderProduction { get; set; }
 
         public DbSet<models.Production> Production { get; set; }
 
