@@ -18,5 +18,17 @@ namespace sequor_backend.data
         public DbSet<models.ProductMaterial> ProductMaterial { get; set; }
 
         public DbSet<models.User> Users { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<models.Production>()
+                .HasKey(production => new
+                {
+                    production.Id,
+                    production.Email,
+                    production.Order,
+                    production.Date
+                });
+        }
 }
 }
