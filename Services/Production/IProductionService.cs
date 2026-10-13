@@ -7,10 +7,8 @@ namespace sequor_backend.Services.Production;
 public interface IProductionService
 {
     Task<IReadOnlyList<ProductionResponse>> GetByEmailAsync(
-        string email,
-        CancellationToken cancellationToken);
+        string email);
 
     Task<ProductionCreateResult> CreateAsync(
-        CreateProductionRequest request,
-        CancellationToken cancellationToken);
+        CreateProductionRequest request);
 }

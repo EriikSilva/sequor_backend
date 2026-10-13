@@ -9,29 +9,26 @@ namespace sequor_backend.Controllers.Production;
 [Route("api/orders")]
 public sealed class ProductionController(IProductionService productionService) : ControllerBase
 {
-    /// <summary>Returns the production records registered by an email address.</summary>
     [HttpGet("GetProduction")]
     [ProducesResponseType(typeof(ProductionListResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<ProductionListResponse>> GetProduction(
-        [FromQuery, Required, EmailAddress] string email,
-        CancellationToken cancellationToken)
+        [FromQuery, Required, EmailAddress] string email)
     {
-        var records = await productionService.GetByEmailAsync(email, cancellationToken);
+        var records = await productionService.GetByEmailAsync(email);
         return Ok(new ProductionListResponse(records));
     }
 
-    /// <summary>Records production for an existing user and order.</summary>
     [HttpPost("Production")]
     [ProducesResponseType(typeof(ProductionCreatedResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
     public async Task<ActionResult<ProductionCreatedResponse>> Create(
-        CreateProductionRequest request,
-        CancellationToken cancellationToken)
+        CreateProductionRequest request
+        )
     {
-        var result = await productionService.CreateAsync(request, cancellationToken);
+        var result = await productionService.CreateAsync(request);
         return result.Error switch
         {
             ProductionCreateError.None => CreatedAtAction(
