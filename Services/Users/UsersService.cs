@@ -10,12 +10,10 @@ namespace sequor_backend.Services.Users;
 public sealed class UsersService(appDbContext dbContext) : IUsersService
 {
     public async Task<UserResponse?> CreateAsync(
-        CreateUserRequest request,
-        CancellationToken cancellationToken)
+        CreateUserRequest request)
     {
         if (await dbContext.Users.AnyAsync(
-                user => user.Email == request.Email,
-                cancellationToken))
+                user => user.Email == request.Email))
         {
             throw new InvalidOperationException("User with the specified email address already exists.");
         }
@@ -29,18 +27,17 @@ public sealed class UsersService(appDbContext dbContext) : IUsersService
         };
 
         dbContext.Users.Add(user);
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await dbContext.SaveChangesAsync();
 
         return ToResponse(user);
     }
 
     public async Task<UserResponse?> GetByEmailAsync(
-        string email,
-        CancellationToken cancellationToken)
+        string email)
     {
         var user = await dbContext.Users
             .AsNoTracking()
-            .SingleOrDefaultAsync(user => user.Email == email, cancellationToken);
+            .SingleOrDefaultAsync(user => user.Email == email);
 
         return user is null ? null : ToResponse(user);
     }

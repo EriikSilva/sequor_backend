@@ -13,10 +13,9 @@ public sealed class UsersController(IUsersService usersService) : ControllerBase
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
     public async Task<ActionResult<UserResponse>> Create(
-        CreateUserRequest request,
-        CancellationToken cancellationToken)
+        CreateUserRequest request)
     {
-        var response = await usersService.CreateAsync(request, cancellationToken);
+        var response = await usersService.CreateAsync(request);
         if (response is null)
         {
             return Conflict(new ProblemDetails
@@ -37,10 +36,9 @@ public sealed class UsersController(IUsersService usersService) : ControllerBase
     [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<UserResponse>> GetByEmail(
-        string email,
-        CancellationToken cancellationToken)
+        string email)
     {
-        var response = await usersService.GetByEmailAsync(email, cancellationToken);
+        var response = await usersService.GetByEmailAsync(email);
         return response is null ? NotFound() : Ok(response);
     }
 }

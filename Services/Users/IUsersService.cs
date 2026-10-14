@@ -7,10 +7,8 @@ namespace sequor_backend.Services.Users;
 public interface IUsersService
 {
     Task<UserResponse?> CreateAsync(
-        CreateUserRequest request,
-        CancellationToken cancellationToken);
+        CreateUserRequest request);
 
     Task<UserResponse?> GetByEmailAsync(
-        string email,
-        CancellationToken cancellationToken);
+        string email);
 }
