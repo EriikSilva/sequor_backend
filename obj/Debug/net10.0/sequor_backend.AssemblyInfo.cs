@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("sequor_backend")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+92775dc6b6fb58b6d25e4a7dbaa1070a9527ffae")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+453eb57b25e848761e83816d4791f5f9d5a3db88")]
 [assembly: System.Reflection.AssemblyProductAttribute("sequor_backend")]
 [assembly: System.Reflection.AssemblyTitleAttribute("sequor_backend")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

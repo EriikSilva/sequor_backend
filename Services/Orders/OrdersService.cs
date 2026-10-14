@@ -57,10 +57,10 @@ public sealed class OrdersService(appDbContext dbContext) : IOrdersService
                     order.Order,
                     order.Quantity,
                     order.ProductCode,
-                    product?.ProductDescription,
-                    product?.Image,
-                    product?.CycleTime ?? 0m,
-                    productMaterials ?? Array.Empty<MaterialResponse>());
+                    product.ProductDescription,
+                    product.Image,
+                    product.CycleTime,
+                    productMaterials);
             })
             .ToArray();
 

@@ -1,3 +1,5 @@
+#nullable enable
+
 namespace sequor_backend.Contracts.Production;
 
 public sealed record ProductionListResponse(IReadOnlyList<ProductionResponse> Productions);
@@ -13,6 +15,9 @@ public sealed record ProductionResponse(
     decimal CycleTime,
     decimal CycleTimeElapsed);
 
-public sealed record ProductionCreatedResponse(
-    ProductionResponse Production,
-    string Message);
+public sealed record ProductionSubmissionResponse(
+    int Status,
+    string Type,
+    string Description,
+    ProductionResponse? Production,
+    string? Message = null);

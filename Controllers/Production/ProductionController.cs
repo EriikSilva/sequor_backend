@@ -20,9 +20,11 @@ public sealed class ProductionController(IProductionService productionService) :
     }
 
     [HttpPost("Production")]
-    [ProducesResponseType(typeof(ProductionCreatedResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ProductionCreatedResponse), StatusCodes.Status201Created)]
-    public async Task<ActionResult<ProductionCreatedResponse>> Create(
+    [ProducesResponseType(typeof(ProductionSubmissionResponse), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ProductionSubmissionResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProductionSubmissionResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProductionSubmissionResponse), StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<ProductionSubmissionResponse>> Create(
         CreateProductionRequest request)
     {
         var result = await productionService.CreateAsync(request);
@@ -32,44 +34,37 @@ public sealed class ProductionController(IProductionService productionService) :
                 nameof(GetProduction),
                 new { email = request.Email },
                 result.Response),
-            ProductionCreateError.UserNotFound => NotFound(Problem(
+            ProductionCreateError.UserNotFound => SubmissionError(
                 StatusCodes.Status404NotFound,
-                "User not found",
-                "The email address is not registered.")),
-            ProductionCreateError.OrderNotFound => NotFound(Problem(
+                "O endereço de e-mail não está cadastrado."),
+            ProductionCreateError.OrderNotFound => SubmissionError(
                 StatusCodes.Status404NotFound,
-                "Order not found",
-                "The order or its product was not found.")),
-            ProductionCreateError.MaterialNotInOrder => BadRequest(Problem(
+                "A ordem ou o produto correspondente não foi encontrado."),
+            ProductionCreateError.MaterialNotInOrder => SubmissionError(
                 StatusCodes.Status400BadRequest,
-                "Material not associated with order",
-                "The material must be associated with the product for the specified order.")),
-            ProductionCreateError.AppointmentOutsideUserPeriod => BadRequest(Problem(
+                "O material deve estar associado ao produto da ordem informada."),
+            ProductionCreateError.AppointmentOutsideUserPeriod => SubmissionError(
                 StatusCodes.Status400BadRequest,
-                "Appointment outside user period",
-                "The appointment dates must be within the user's registered start and end dates.")),
-            ProductionCreateError.EndBeforeStart => BadRequest(Problem(
+                "As datas do apontamento devem estar dentro do período cadastrado para o usuário."),
+            ProductionCreateError.EndBeforeStart => SubmissionError(
                 StatusCodes.Status400BadRequest,
-                "Invalid appointment dates",
-                "The appointment end date must be on or after its start date.")),
-            ProductionCreateError.QuantityExceedsOrder => Conflict(Problem(
+                "A data final do apontamento deve ser igual ou posterior à data inicial."),
+            ProductionCreateError.QuantityExceedsOrder => SubmissionError(
                 StatusCodes.Status409Conflict,
-                "Order quantity exceeded",
-                "The total quantity reported for this order cannot exceed its ordered quantity.")),
-            ProductionCreateError.CycleTimeElapsedExceedsCycleTime => BadRequest(Problem(
+                "A quantidade total apontada para esta ordem não pode exceder a quantidade solicitada."),
+            ProductionCreateError.CycleTimeElapsedExceedsCycleTime => SubmissionError(
                 StatusCodes.Status400BadRequest,
-                "Elapsed cycle time must be greater than zero",
-                "The elapsed cycle time must be greater than zero.")),
+                "O tempo de ciclo decorrido deve ser maior que zero."),
             _ => throw new InvalidOperationException("Unknown production creation result.")
         };
     }
 
-    private ProblemDetails Problem(int status, string title, string detail) =>
-        new()
-        {
-            Status = status,
-            Title = title,
-            Detail = detail,
-            Instance = Request.Path
-        };
+    private ActionResult<ProductionSubmissionResponse> SubmissionError(
+        int httpStatus,
+        string description) =>
+        StatusCode(httpStatus, new ProductionSubmissionResponse(
+            201,
+            "E",
+            description,
+            null));
 }

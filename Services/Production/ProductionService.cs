@@ -140,7 +140,12 @@ public sealed class ProductionService(appDbContext dbContext) : IProductionServi
 
         return new ProductionCreateResult(
             ProductionCreateError.None,
-            new ProductionCreatedResponse(
+            new ProductionSubmissionResponse(
+                200,
+                "S",
+                message is null
+                    ? "Produção cadastrada com sucesso."
+                    : $"Produção cadastrada com sucesso. {message}",
                 ToResponse(productionRecord, materialDescription),
                 message));
     }

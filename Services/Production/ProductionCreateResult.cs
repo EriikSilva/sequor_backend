@@ -18,4 +18,4 @@ public enum ProductionCreateError
 
 public sealed record ProductionCreateResult(
     ProductionCreateError Error,
-    ProductionCreatedResponse? Response);
+    ProductionSubmissionResponse? Response);
