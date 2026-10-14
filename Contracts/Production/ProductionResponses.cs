@@ -6,6 +6,7 @@ public sealed record ProductionResponse(
     string Email,
     string Order,
     string MaterialCode,
+    string? MaterialDescription,
     DateTimeOffset StartDateAppointment,
     DateTimeOffset? EndDateAppointment,
     decimal Quantity,

@@ -13,15 +13,22 @@ public sealed class ProductionService(appDbContext dbContext) : IProductionServi
     public async Task<IReadOnlyList<ProductionResponse>> GetByEmailAsync(
         string email)
     {
-        var records = await dbContext.Production
-            .AsNoTracking()
-            .Where(production => production.Email == email)
-            .OrderBy(production => production.StartDateAppointment)
-            .ThenBy(production => production.Order)
+        var records = await (
+            from production in dbContext.Production.AsNoTracking()
+            join material in dbContext.Material.AsNoTracking()
+                on production.MaterialCode equals material.MaterialCode into productionMaterials
+            from material in productionMaterials.DefaultIfEmpty()
+            where production.Email == email
+            orderby production.StartDateAppointment, production.Order
+            select new
+            {
+                Production = production,
+                MaterialDescription = material == null ? null : material.MaterialDescription
+            })
             .ToListAsync();
 
         return records
-            .Select(ToResponse)
+            .Select(record => ToResponse(record.Production, record.MaterialDescription))
             .ToArray();
     }
 
@@ -92,6 +99,12 @@ public sealed class ProductionService(appDbContext dbContext) : IProductionServi
             return Failure(ProductionCreateError.MaterialNotInOrder);
         }
 
+        var materialDescription = await dbContext.Material
+            .AsNoTracking()
+            .Where(material => material.MaterialCode == request.MaterialCode)
+            .Select(material => material.MaterialDescription)
+            .SingleOrDefaultAsync();
+
         var quantityAlreadyRecorded = await dbContext.Production
             .Where(production => production.Order == request.Order)
             .SumAsync(production => (decimal?)production.Quantity) ?? 0m;
@@ -127,17 +140,22 @@ public sealed class ProductionService(appDbContext dbContext) : IProductionServi
 
         return new ProductionCreateResult(
             ProductionCreateError.None,
-            new ProductionCreatedResponse(ToResponse(productionRecord), message));
+            new ProductionCreatedResponse(
+                ToResponse(productionRecord, materialDescription),
+                message));
     }
 
     private static ProductionCreateResult Failure(ProductionCreateError error) =>
         new(error, null);
 
-    private static ProductionResponse ToResponse(ProductionEntity production) =>
+    private static ProductionResponse ToResponse(
+        ProductionEntity production,
+        string? materialDescription) =>
         new(
             production.Email,
             production.Order,
             production.MaterialCode,
+            materialDescription,
             new DateTimeOffset(DateTime.SpecifyKind(
                 production.StartDateAppointment,
                 DateTimeKind.Utc)),
