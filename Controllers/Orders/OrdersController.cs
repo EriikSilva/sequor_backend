@@ -8,13 +8,11 @@ namespace sequor_backend.Controllers.Orders;
 [Route("api/[controller]")]
 public sealed class OrdersController(IOrdersService ordersService) : ControllerBase
 {
-    /// <summary>Returns all orders with their product and material details.</summary>
     [HttpGet]
     [ProducesResponseType(typeof(OrdersListResponse), StatusCodes.Status200OK)]
-    public async Task<ActionResult<OrdersListResponse>> GetOrders(
-        CancellationToken cancellationToken)
+    public async Task<ActionResult<OrdersListResponse>> GetOrders()
     {
-        var response = await ordersService.GetOrdersAsync(cancellationToken);
+        var response = await ordersService.GetOrdersAsync();
         return Ok(response);
     }
 }

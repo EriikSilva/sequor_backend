@@ -6,12 +6,12 @@ namespace sequor_backend.Services.Orders;
 
 public sealed class OrdersService(appDbContext dbContext) : IOrdersService
 {
-    public async Task<OrdersListResponse> GetOrdersAsync(CancellationToken cancellationToken)
+    public async Task<OrdersListResponse> GetOrdersAsync()
     {
         var orders = await dbContext.OrderProduction
             .AsNoTracking()
             .OrderBy(order => order.Order)
-            .ToListAsync(cancellationToken);
+            .ToListAsync();
 
         var productCodes = orders
             .Select(order => order.ProductCode)
@@ -22,7 +22,7 @@ public sealed class OrdersService(appDbContext dbContext) : IOrdersService
         var products = await dbContext.Product
             .AsNoTracking()
             .Where(product => productCodes.Contains(product.ProductCode))
-            .ToDictionaryAsync(product => product.ProductCode, cancellationToken);
+            .ToDictionaryAsync(product => product.ProductCode);
 
         var materials = await (
             from productMaterial in dbContext.ProductMaterial.AsNoTracking()
@@ -37,7 +37,7 @@ public sealed class OrdersService(appDbContext dbContext) : IOrdersService
                     material.MaterialCode,
                     material.MaterialDescription)
             })
-            .ToListAsync(cancellationToken);
+            .ToListAsync();
 
         var materialsByProduct = materials
             .GroupBy(row => row.ProductCode)

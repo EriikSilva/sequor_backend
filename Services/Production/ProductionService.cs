@@ -11,15 +11,14 @@ namespace sequor_backend.Services.Production;
 public sealed class ProductionService(appDbContext dbContext) : IProductionService
 {
     public async Task<IReadOnlyList<ProductionResponse>> GetByEmailAsync(
-        string email,
-        CancellationToken cancellationToken)
+        string email)
     {
         var records = await dbContext.Production
             .AsNoTracking()
             .Where(production => production.Email == email)
             .OrderBy(production => production.StartDateAppointment)
             .ThenBy(production => production.Order)
-            .ToListAsync(cancellationToken);
+            .ToListAsync();
 
         return records
             .Select(ToResponse)
@@ -27,8 +26,7 @@ public sealed class ProductionService(appDbContext dbContext) : IProductionServi
     }
 
     public async Task<ProductionCreateResult> CreateAsync(
-        CreateProductionRequest request,
-        CancellationToken cancellationToken)
+        CreateProductionRequest request)
     {
         var start = request.StartDateAppointment!.Value.UtcDateTime;
         var end = request.EndDateAppointment!.Value.UtcDateTime;
@@ -39,14 +37,12 @@ public sealed class ProductionService(appDbContext dbContext) : IProductionServi
         }
 
         await using var transaction = await dbContext.Database.BeginTransactionAsync(
-            IsolationLevel.Serializable,
-            cancellationToken);
+            IsolationLevel.Serializable);
 
         var user = await dbContext.Users
             .AsNoTracking()
             .SingleOrDefaultAsync(
-                candidate => candidate.Email == request.Email,
-                cancellationToken);
+                candidate => candidate.Email == request.Email);
         if (user is null)
         {
             return Failure(ProductionCreateError.UserNotFound);
@@ -65,8 +61,7 @@ public sealed class ProductionService(appDbContext dbContext) : IProductionServi
         var order = await dbContext.OrderProduction
             .AsNoTracking()
             .SingleOrDefaultAsync(
-                candidate => candidate.Order == request.Order,
-                cancellationToken);
+                candidate => candidate.Order == request.Order);
         if (order is null)
         {
             return Failure(ProductionCreateError.OrderNotFound);
@@ -75,8 +70,7 @@ public sealed class ProductionService(appDbContext dbContext) : IProductionServi
         var product = await dbContext.Product
             .AsNoTracking()
             .SingleOrDefaultAsync(
-                candidate => candidate.ProductCode == order.ProductCode,
-                cancellationToken);
+                candidate => candidate.ProductCode == order.ProductCode);
         if (product is null)
         {
             return Failure(ProductionCreateError.OrderNotFound);
@@ -87,8 +81,7 @@ public sealed class ProductionService(appDbContext dbContext) : IProductionServi
             .AnyAsync(
                 productMaterial =>
                     productMaterial.ProductCode == order.ProductCode &&
-                    productMaterial.MaterialCode == request.MaterialCode,
-                cancellationToken);
+                    productMaterial.MaterialCode == request.MaterialCode);
         if (!materialBelongsToOrder)
         {
             return Failure(ProductionCreateError.MaterialNotInOrder);
@@ -96,7 +89,7 @@ public sealed class ProductionService(appDbContext dbContext) : IProductionServi
 
         var quantityAlreadyRecorded = await dbContext.Production
             .Where(production => production.Order == request.Order)
-            .SumAsync(production => (decimal?)production.Quantity, cancellationToken) ?? 0m;
+            .SumAsync(production => (decimal?)production.Quantity) ?? 0m;
 
         if (quantityAlreadyRecorded + request.Quantity > order.Quantity)
         {
@@ -104,7 +97,7 @@ public sealed class ProductionService(appDbContext dbContext) : IProductionServi
         }
 
         var nextId = (await dbContext.Production
-            .MaxAsync(production => (long?)production.Id, cancellationToken) ?? 0L) + 1;
+            .MaxAsync(production => (long?)production.Id) ?? 0L) + 1;
 
         var productionRecord = new ProductionEntity
         {
@@ -119,8 +112,8 @@ public sealed class ProductionService(appDbContext dbContext) : IProductionServi
         };
 
         dbContext.Production.Add(productionRecord);
-        await dbContext.SaveChangesAsync(cancellationToken);
-        await transaction.CommitAsync(cancellationToken);
+        await dbContext.SaveChangesAsync();
+        await transaction.CommitAsync();
 
         var message = request.CycleTime < product.CycleTime
             ? $"O tempo informado ({request.CycleTime}) é menor que o ciclo padrão da ordem ({product.CycleTime})."

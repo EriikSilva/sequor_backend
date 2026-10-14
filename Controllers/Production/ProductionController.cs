@@ -13,10 +13,9 @@ public sealed class ProductionController(IProductionService productionService) :
     [ProducesResponseType(typeof(ProductionListResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<ProductionListResponse>> GetProduction(
-        [FromQuery, Required, EmailAddress] string email,
-        CancellationToken cancellationToken)
+        [FromQuery, Required, EmailAddress] string email)
     {
-        var records = await productionService.GetByEmailAsync(email, cancellationToken);
+        var records = await productionService.GetByEmailAsync(email);
         return Ok(new ProductionListResponse(records));
     }
 
@@ -26,10 +25,9 @@ public sealed class ProductionController(IProductionService productionService) :
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
     public async Task<ActionResult<ProductionCreatedResponse>> Create(
-        CreateProductionRequest request,
-        CancellationToken cancellationToken)
+        CreateProductionRequest request)
     {
-        var result = await productionService.CreateAsync(request, cancellationToken);
+        var result = await productionService.CreateAsync(request);
         return result.Error switch
         {
             ProductionCreateError.None => CreatedAtAction(
