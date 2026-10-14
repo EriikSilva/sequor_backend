@@ -82,6 +82,18 @@ public sealed class ProductionService(appDbContext dbContext) : IProductionServi
             return Failure(ProductionCreateError.OrderNotFound);
         }
 
+        var materialBelongsToOrder = await dbContext.ProductMaterial
+            .AsNoTracking()
+            .AnyAsync(
+                productMaterial =>
+                    productMaterial.ProductCode == order.ProductCode &&
+                    productMaterial.MaterialCode == request.MaterialCode,
+                cancellationToken);
+        if (!materialBelongsToOrder)
+        {
+            return Failure(ProductionCreateError.MaterialNotInOrder);
+        }
+
         var quantityAlreadyRecorded = await dbContext.Production
             .Where(production => production.Order == request.Order)
             .SumAsync(production => (decimal?)production.Quantity, cancellationToken) ?? 0m;
@@ -99,6 +111,7 @@ public sealed class ProductionService(appDbContext dbContext) : IProductionServi
             Id = nextId,
             Email = request.Email,
             Order = request.Order,
+            MaterialCode = request.MaterialCode,
             StartDateAppointment = start,
             EndDateAppointment = end,
             Quantity = request.Quantity,
@@ -125,6 +138,7 @@ public sealed class ProductionService(appDbContext dbContext) : IProductionServi
         new(
             production.Email,
             production.Order,
+            production.MaterialCode,
             new DateTimeOffset(DateTime.SpecifyKind(
                 production.StartDateAppointment,
                 DateTimeKind.Utc)),

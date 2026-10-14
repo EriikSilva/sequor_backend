@@ -13,6 +13,10 @@ public sealed record CreateProductionRequest
     [Required, MaxLength(50)]
     public required string Order { get; init; }
 
+    /// <summary>Material used for this order's product.</summary>
+    [Required, MaxLength(50)]
+    public required string MaterialCode { get; init; }
+
     /// <summary>Start of the production appointment.</summary>
     [Required]
     public DateTimeOffset? StartDateAppointment { get; init; }

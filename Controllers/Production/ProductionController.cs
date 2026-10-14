@@ -13,9 +13,10 @@ public sealed class ProductionController(IProductionService productionService) :
     [ProducesResponseType(typeof(ProductionListResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<ProductionListResponse>> GetProduction(
-        [FromQuery, Required, EmailAddress] string email)
+        [FromQuery, Required, EmailAddress] string email,
+        CancellationToken cancellationToken)
     {
-        var records = await productionService.GetByEmailAsync(email);
+        var records = await productionService.GetByEmailAsync(email, cancellationToken);
         return Ok(new ProductionListResponse(records));
     }
 
@@ -25,10 +26,10 @@ public sealed class ProductionController(IProductionService productionService) :
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
     public async Task<ActionResult<ProductionCreatedResponse>> Create(
-        CreateProductionRequest request
-        )
+        CreateProductionRequest request,
+        CancellationToken cancellationToken)
     {
-        var result = await productionService.CreateAsync(request);
+        var result = await productionService.CreateAsync(request, cancellationToken);
         return result.Error switch
         {
             ProductionCreateError.None => CreatedAtAction(
@@ -43,6 +44,10 @@ public sealed class ProductionController(IProductionService productionService) :
                 StatusCodes.Status404NotFound,
                 "Order not found",
                 "The order or its product was not found.")),
+            ProductionCreateError.MaterialNotInOrder => BadRequest(Problem(
+                StatusCodes.Status400BadRequest,
+                "Material not associated with order",
+                "The material must be associated with the product for the specified order.")),
             ProductionCreateError.AppointmentOutsideUserPeriod => BadRequest(Problem(
                 StatusCodes.Status400BadRequest,
                 "Appointment outside user period",

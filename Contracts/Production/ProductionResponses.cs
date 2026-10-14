@@ -9,6 +9,7 @@ public sealed record ProductionListResponse(IReadOnlyList<ProductionResponse> Pr
 public sealed record ProductionResponse(
     string Email,
     string Order,
+    string MaterialCode,
     DateTimeOffset StartDateAppointment,
     DateTimeOffset? EndDateAppointment,
     decimal Quantity,

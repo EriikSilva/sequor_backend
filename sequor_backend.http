@@ -37,6 +37,7 @@ Content-Type: application/json
 {
   "email": "new.user@example.com",
   "order": "111",
+  "materialCode": "aaa",
   "startDateAppointment": "2026-10-13T09:00:00Z",
   "endDateAppointment": "2026-10-13T10:00:00Z",
   "quantity": 10,

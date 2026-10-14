@@ -9,6 +9,7 @@ public enum ProductionCreateError
     None,
     UserNotFound,
     OrderNotFound,
+    MaterialNotInOrder,
     AppointmentOutsideUserPeriod,
     EndBeforeStart,
     QuantityExceedsOrder
