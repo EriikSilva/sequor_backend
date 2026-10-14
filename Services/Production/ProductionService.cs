@@ -31,6 +31,11 @@ public sealed class ProductionService(appDbContext dbContext) : IProductionServi
         var start = request.StartDateAppointment!.Value.UtcDateTime;
         var end = request.EndDateAppointment!.Value.UtcDateTime;
 
+        if (request.CycleTimeElapsed <= 0)
+        {
+            return Failure(ProductionCreateError.CycleTimeElapsedExceedsCycleTime);
+        }
+
         if (end < start)
         {
             return Failure(ProductionCreateError.EndBeforeStart);
@@ -108,7 +113,8 @@ public sealed class ProductionService(appDbContext dbContext) : IProductionServi
             StartDateAppointment = start,
             EndDateAppointment = end,
             Quantity = request.Quantity,
-            CycleTime = request.CycleTime
+            CycleTime = request.CycleTime,
+            CycleTimeElapsed = request.CycleTimeElapsed
         };
 
         dbContext.Production.Add(productionRecord);
@@ -141,5 +147,6 @@ public sealed class ProductionService(appDbContext dbContext) : IProductionServi
                     production.EndDateAppointment.Value,
                     DateTimeKind.Utc)),
             production.Quantity,
-            production.CycleTime);
+            production.CycleTime,
+            production.CycleTimeElapsed);
 }

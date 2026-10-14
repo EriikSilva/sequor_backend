@@ -177,6 +177,9 @@ namespace sequor_backend.Migrations
                     b.Property<decimal>("CycleTime")
                         .HasColumnType("numeric(18,2)");
 
+                    b.Property<decimal>("CycleTimeElapsed")
+                        .HasColumnType("numeric(18,2)");
+
                     b.Property<DateTime?>("EndDateAppointment")
                         .HasColumnType("DateTime");
 

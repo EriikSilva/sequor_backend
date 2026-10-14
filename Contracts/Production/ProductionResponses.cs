@@ -13,7 +13,8 @@ public sealed record ProductionResponse(
     DateTimeOffset StartDateAppointment,
     DateTimeOffset? EndDateAppointment,
     decimal Quantity,
-    decimal CycleTime);
+    decimal CycleTime,
+    decimal CycleTimeElapsed);
 
 /// <summary>Result of recording production, including any informational message.</summary>
 public sealed record ProductionCreatedResponse(

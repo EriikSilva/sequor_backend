@@ -12,7 +12,8 @@ public enum ProductionCreateError
     MaterialNotInOrder,
     AppointmentOutsideUserPeriod,
     EndBeforeStart,
-    QuantityExceedsOrder
+    QuantityExceedsOrder,
+    CycleTimeElapsedExceedsCycleTime
 }
 
 public sealed record ProductionCreateResult(

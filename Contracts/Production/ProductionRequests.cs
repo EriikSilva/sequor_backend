@@ -40,4 +40,12 @@ public sealed record CreateProductionRequest
         "9999999999999999.99",
         ParseLimitsInInvariantCulture = true)]
     public decimal CycleTime { get; init; }
+
+    /// <summary>Elapsed cycle time recorded for this appointment.</summary>
+    [Range(
+        typeof(decimal),
+        "0.01",
+        "9999999999999999.99",
+        ParseLimitsInInvariantCulture = true)]
+    public decimal CycleTimeElapsed { get; init; }
 }

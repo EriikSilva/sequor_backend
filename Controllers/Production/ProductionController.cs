@@ -20,10 +20,8 @@ public sealed class ProductionController(IProductionService productionService) :
     }
 
     [HttpPost("Production")]
+    [ProducesResponseType(typeof(ProductionCreatedResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProductionCreatedResponse), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
     public async Task<ActionResult<ProductionCreatedResponse>> Create(
         CreateProductionRequest request)
     {
@@ -58,6 +56,10 @@ public sealed class ProductionController(IProductionService productionService) :
                 StatusCodes.Status409Conflict,
                 "Order quantity exceeded",
                 "The total quantity reported for this order cannot exceed its ordered quantity.")),
+            ProductionCreateError.CycleTimeElapsedExceedsCycleTime => BadRequest(Problem(
+                StatusCodes.Status400BadRequest,
+                "Elapsed cycle time must be greater than zero",
+                "The elapsed cycle time must be greater than zero.")),
             _ => throw new InvalidOperationException("Unknown production creation result.")
         };
     }

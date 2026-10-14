@@ -27,5 +27,8 @@ namespace sequor_backend.models
 
         [Column(TypeName = "numeric(18,2)")]
         public decimal CycleTime { get; set; }
+
+        [Column(TypeName = "numeric(18,2)")]
+        public decimal CycleTimeElapsed { get; set; }
     }
 }
